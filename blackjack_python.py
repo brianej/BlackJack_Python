@@ -7,6 +7,33 @@ ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
 values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 
             'Nine':9, 'Ten':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':True}
 
+
+class Card:
+    
+    def __init__(self,suit,rank):
+        self.suit = suit
+        self.rank = rank
+        self.value = values[rank]
+        
+    def __str__(self):
+        return self.rank + ' of ' + self.suit
+    
+
+class Deck:
+    
+    def __init__(self):
+        self.all_cards = [] 
+        for suit in suits:
+            for rank in ranks:
+                self.all_cards.append(Card(suit,rank))
+                
+    def shuffle(self):
+        random.shuffle(self.all_cards)
+        
+    def deal_one(self):
+        return self.all_cards.pop() 
+    
+
 class Human:
     
     def __init__(self):
@@ -47,6 +74,8 @@ class Human:
                 continue
 
             self.total_value += values[card.rank]
+        
+        print("you total value of cards now is: ", self.total_value)
 
         while self.theres_ace:
             if (self.num_of_aces == 1):
@@ -58,6 +87,8 @@ class Human:
             elif (self.num_of_aces == 4):
                 return two_int_val(4,14,self.total_value)
         
+        print(f"The total value of the dealer's cards are {self.total_value}.")
+
         return self.total_value
          
 
@@ -125,32 +156,6 @@ class Dealer(Human):
             print(f"You,{player} have lost ${value}.")
 
 
-class Card:
-    
-    def __init__(self,suit,rank):
-        self.suit = suit
-        self.rank = rank
-        self.value = values[rank]
-        
-    def __str__(self):
-        return self.rank + ' of ' + self.suit
-    
-
-class Deck:
-    
-    def __init__(self):
-        self.all_cards = [] 
-        for suit in suits:
-            for rank in ranks:
-                self.all_cards.append(Card(suit,rank))
-                
-    def shuffle(self):
-        random.shuffle(self.all_cards)
-        
-    def deal_one(self):
-        return self.all_cards.pop() 
-
-
 round_num = 0
 game_status = True
 
@@ -163,7 +168,7 @@ while game_status:
         p1 = Player(p1_name)
         dealer = Dealer()
         print(f"Good Day {p1_name}. We shall now start the game of blackjack.")
-        print("You will start with $500 and when the payout for this game is 3/2. So you will win $3 for every $2 you bet.")
+        print("You will start with $500 and the payout for this game is 3/2. So you will win $3 for every $2 you bet.")
         print("Let us start the game now. Have fun playing.")
     
     print("You have $", p1.cash)
@@ -171,12 +176,13 @@ while game_status:
     while pot > p1.cash:
         ans = input("You cannot bet this much money here as you don't have enough money. Press 'Y' to bet a lower amount or 'N' to exit the game.")
         if ans == 'Y':
-            continue
+            pot = int(input("How much money would you like to bet?"))
         elif ans == 'N':
             game_status = False
             break
         else:
             print("You entered a wrong amount please try again.")
+    print("You are bettting: ",pot)
         
     
     deck = Deck()
@@ -184,16 +190,16 @@ while game_status:
 
     for i in range(4):
         if i == 3:
-            dealer.cards.append(deck.deal_one)
-            continue
+            dealer.cards.append(deck.deal_one())
+            break
 
         if i == 2:
-            d = deck.deal_one
+            d = deck.deal_one()
             dealer.cards.append(c)
             print("Card for dealer:",d)
             continue
 
-        c = deck.deal_one
+        c = deck.deal_one()
         p1.cards.append(c)
         print("Card for player:",c)
 
@@ -204,7 +210,7 @@ while game_status:
         ans1 = input("Press 'Y' to hit or 'N' to stand.")        
         
         if ans1 == 'Y':
-            c = deck.deal_one
+            c = deck.deal_one()
             p1.cards.append(c)
             print("Card for player:",c)
             p1.count_cards()
@@ -221,7 +227,7 @@ while game_status:
         else:
             print("You entered a wrong amount please try again.")
     
-    print(dealer.cards[1])
+    print("The dealer's second card is:",dealer.cards[1])
 
     while game_not_end:
         dealer.count_cards()
@@ -234,7 +240,7 @@ while game_status:
                 break    
         
         if dealer.total_value  <= p1.total_value:
-            c = deck.deal_one
+            c = deck.deal_one()
             dealer.cards.append(c)
             print("Card for player:",c)
             dealer.count_cards()
